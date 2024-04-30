@@ -15,6 +15,26 @@ import (
 
 var conf Config
 
+func filtrarServicios(comedores []Comedor) []Servicio {
+	var Servicios []Servicio
+
+	for _, comedorConf := range conf.Comedores {
+		for _, comedor := range comedores {
+			if comedor.Nombre == comedorConf.Nombre {
+				for _, servicio := range comedor.Servicios {
+					if servicio.HoraInicio.HoraCorta == comedorConf.HoraInicio &&
+						servicio.Tipo.Nombre == comedorConf.Comida &&
+						servicio.ParaLlevar == comedorConf.ParaLlevar {
+						Servicios = append(Servicios, servicio)
+					}
+				}
+			}
+		}
+	}
+
+	return Servicios
+}
+
 func getComedores(client *http.Client) []Comedor {
 	resp, err := client.Get("https://comedores.unr.edu.ar/comedor-reserva/reservar")
 	reg, _ := regexp.Compile("var jsonReservar[\\s\\S]*?\\};")
@@ -71,5 +91,5 @@ func main() {
 		comedoresArray = getComedores(client)
 	}
 
-	fmt.Println(comedoresArray)
+	fmt.Println(filtrarServicios(comedoresArray))
 }

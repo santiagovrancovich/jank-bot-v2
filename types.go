@@ -16,6 +16,85 @@ type Config struct {
 	Token         string `json:"token"`
 	Channel       int    `json:"channel"`
 }
+
+type Servicio struct {
+	ID      int `json:"id"`
+	Comedor struct {
+		ID     int    `json:"id"`
+		Nombre string `json:"nombre"`
+	} `json:"comedor"`
+	Tipo struct {
+		ID                     int    `json:"id"`
+		Nombre                 string `json:"nombre"`
+		AplicaBeneficiosBecado bool   `json:"aplicaBeneficiosBecado"`
+		Orden                  int    `json:"orden"`
+		Precios                []struct {
+			CategoriaComensal struct {
+				ID            int    `json:"id"`
+				Nombre        string `json:"nombre"`
+				NombreInterno string `json:"nombreInterno"`
+			} `json:"categoriaComensal"`
+			ID     int `json:"id"`
+			Precio int `json:"precio"`
+		} `json:"precios"`
+	} `json:"tipo"`
+	Dias []struct {
+		Nombre     string `json:"nombre"`
+		NumeroDia  int    `json:"numeroDia"`
+		GetInicial string `json:"getInicial"`
+	} `json:"dias"`
+	Nombre             string `json:"nombre"`
+	FechaVigenciaDesde struct {
+		Hora       string `json:"hora"`
+		HoraCorta  string `json:"horaCorta"`
+		Fecha      string `json:"fecha"`
+		Mysql      string `json:"mysql"`
+		DiaNombre  string `json:"diaNombre"`
+		FechaMysql string `json:"fechaMysql"`
+		Timezone   struct {
+			TimezoneType int    `json:"timezone_type"`
+			Timezone     string `json:"timezone"`
+		} `json:"timezone"`
+		Timestamp  int    `json:"timestamp"`
+		FechaCorta string `json:"fechaCorta"`
+	} `json:"fechaVigenciaDesde"`
+	FechaVigenciaHasta interface{} `json:"fechaVigenciaHasta"`
+	HoraInicio         struct {
+		Hora       string `json:"hora"`
+		HoraCorta  string `json:"horaCorta"`
+		Fecha      string `json:"fecha"`
+		Mysql      string `json:"mysql"`
+		DiaNombre  string `json:"diaNombre"`
+		FechaMysql string `json:"fechaMysql"`
+		Timezone   struct {
+			TimezoneType int    `json:"timezone_type"`
+			Timezone     string `json:"timezone"`
+		} `json:"timezone"`
+		Timestamp  int    `json:"timestamp"`
+		FechaCorta string `json:"fechaCorta"`
+	} `json:"horaInicio"`
+	HoraFin struct {
+		Hora       string `json:"hora"`
+		HoraCorta  string `json:"horaCorta"`
+		Fecha      string `json:"fecha"`
+		Mysql      string `json:"mysql"`
+		DiaNombre  string `json:"diaNombre"`
+		FechaMysql string `json:"fechaMysql"`
+		Timezone   struct {
+			TimezoneType int    `json:"timezone_type"`
+			Timezone     string `json:"timezone"`
+		} `json:"timezone"`
+		Timestamp  int    `json:"timestamp"`
+		FechaCorta string `json:"fechaCorta"`
+	} `json:"horaFin"`
+	SinControlCupos               bool   `json:"sinControlCupos"`
+	ParaLlevar                    bool   `json:"paraLlevar"`
+	ComprobarTieneFechaHasta      bool   `json:"comprobarTieneFechaHasta"`
+	ComprobarEsFutura             bool   `json:"comprobarEsFutura"`
+	GetTiempoLimiteReservaMinutos int    `json:"getTiempoLimiteReservaMinutos"`
+	Horario                       string `json:"horario"`
+}
+
 type Comedor struct {
 	ID        int    `json:"id"`
 	Nombre    string `json:"nombre"`
@@ -45,86 +124,10 @@ type Comedor struct {
 		Latitud          float64     `json:"latitud"`
 		Longitud         float64     `json:"longitud"`
 	} `json:"localidad"`
-	DireccionCalle  string `json:"direccionCalle"`
-	DireccionNumero string `json:"direccionNumero"`
-	FotoURL         string `json:"fotoUrl"`
-	Servicios       []struct {
-		ID      int `json:"id"`
-		Comedor struct {
-			ID     int    `json:"id"`
-			Nombre string `json:"nombre"`
-		} `json:"comedor"`
-		Tipo struct {
-			ID                     int    `json:"id"`
-			Nombre                 string `json:"nombre"`
-			AplicaBeneficiosBecado bool   `json:"aplicaBeneficiosBecado"`
-			Orden                  int    `json:"orden"`
-			Precios                []struct {
-				CategoriaComensal struct {
-					ID            int    `json:"id"`
-					Nombre        string `json:"nombre"`
-					NombreInterno string `json:"nombreInterno"`
-				} `json:"categoriaComensal"`
-				ID     int `json:"id"`
-				Precio int `json:"precio"`
-			} `json:"precios"`
-		} `json:"tipo"`
-		Dias []struct {
-			Nombre     string `json:"nombre"`
-			NumeroDia  int    `json:"numeroDia"`
-			GetInicial string `json:"getInicial"`
-		} `json:"dias"`
-		Nombre             string `json:"nombre"`
-		FechaVigenciaDesde struct {
-			Hora       string `json:"hora"`
-			HoraCorta  string `json:"horaCorta"`
-			Fecha      string `json:"fecha"`
-			Mysql      string `json:"mysql"`
-			DiaNombre  string `json:"diaNombre"`
-			FechaMysql string `json:"fechaMysql"`
-			Timezone   struct {
-				TimezoneType int    `json:"timezone_type"`
-				Timezone     string `json:"timezone"`
-			} `json:"timezone"`
-			Timestamp  int    `json:"timestamp"`
-			FechaCorta string `json:"fechaCorta"`
-		} `json:"fechaVigenciaDesde"`
-		FechaVigenciaHasta interface{} `json:"fechaVigenciaHasta"`
-		HoraInicio         struct {
-			Hora       string `json:"hora"`
-			HoraCorta  string `json:"horaCorta"`
-			Fecha      string `json:"fecha"`
-			Mysql      string `json:"mysql"`
-			DiaNombre  string `json:"diaNombre"`
-			FechaMysql string `json:"fechaMysql"`
-			Timezone   struct {
-				TimezoneType int    `json:"timezone_type"`
-				Timezone     string `json:"timezone"`
-			} `json:"timezone"`
-			Timestamp  int    `json:"timestamp"`
-			FechaCorta string `json:"fechaCorta"`
-		} `json:"horaInicio"`
-		HoraFin struct {
-			Hora       string `json:"hora"`
-			HoraCorta  string `json:"horaCorta"`
-			Fecha      string `json:"fecha"`
-			Mysql      string `json:"mysql"`
-			DiaNombre  string `json:"diaNombre"`
-			FechaMysql string `json:"fechaMysql"`
-			Timezone   struct {
-				TimezoneType int    `json:"timezone_type"`
-				Timezone     string `json:"timezone"`
-			} `json:"timezone"`
-			Timestamp  int    `json:"timestamp"`
-			FechaCorta string `json:"fechaCorta"`
-		} `json:"horaFin"`
-		SinControlCupos               bool   `json:"sinControlCupos"`
-		ParaLlevar                    bool   `json:"paraLlevar"`
-		ComprobarTieneFechaHasta      bool   `json:"comprobarTieneFechaHasta"`
-		ComprobarEsFutura             bool   `json:"comprobarEsFutura"`
-		GetTiempoLimiteReservaMinutos int    `json:"getTiempoLimiteReservaMinutos"`
-		Horario                       string `json:"horario"`
-	} `json:"servicios"`
+	DireccionCalle   string     `json:"direccionCalle"`
+	DireccionNumero  string     `json:"direccionNumero"`
+	FotoURL          string     `json:"fotoUrl"`
+	Servicios        []Servicio `json:"servicios"`
 	ServiciosPorTipo []struct {
 		Tipo struct {
 			ID                     int    `json:"id"`
@@ -141,83 +144,7 @@ type Comedor struct {
 				Precio int `json:"precio"`
 			} `json:"precios"`
 		} `json:"tipo"`
-		Servicios []struct {
-			ID      int `json:"id"`
-			Comedor struct {
-				ID     int    `json:"id"`
-				Nombre string `json:"nombre"`
-			} `json:"comedor"`
-			Tipo struct {
-				ID                     int    `json:"id"`
-				Nombre                 string `json:"nombre"`
-				AplicaBeneficiosBecado bool   `json:"aplicaBeneficiosBecado"`
-				Orden                  int    `json:"orden"`
-				Precios                []struct {
-					CategoriaComensal struct {
-						ID            int    `json:"id"`
-						Nombre        string `json:"nombre"`
-						NombreInterno string `json:"nombreInterno"`
-					} `json:"categoriaComensal"`
-					ID     int `json:"id"`
-					Precio int `json:"precio"`
-				} `json:"precios"`
-			} `json:"tipo"`
-			Dias []struct {
-				Nombre     string `json:"nombre"`
-				NumeroDia  int    `json:"numeroDia"`
-				GetInicial string `json:"getInicial"`
-			} `json:"dias"`
-			Nombre             string `json:"nombre"`
-			FechaVigenciaDesde struct {
-				Hora       string `json:"hora"`
-				HoraCorta  string `json:"horaCorta"`
-				Fecha      string `json:"fecha"`
-				Mysql      string `json:"mysql"`
-				DiaNombre  string `json:"diaNombre"`
-				FechaMysql string `json:"fechaMysql"`
-				Timezone   struct {
-					TimezoneType int    `json:"timezone_type"`
-					Timezone     string `json:"timezone"`
-				} `json:"timezone"`
-				Timestamp  int    `json:"timestamp"`
-				FechaCorta string `json:"fechaCorta"`
-			} `json:"fechaVigenciaDesde"`
-			FechaVigenciaHasta interface{} `json:"fechaVigenciaHasta"`
-			HoraInicio         struct {
-				Hora       string `json:"hora"`
-				HoraCorta  string `json:"horaCorta"`
-				Fecha      string `json:"fecha"`
-				Mysql      string `json:"mysql"`
-				DiaNombre  string `json:"diaNombre"`
-				FechaMysql string `json:"fechaMysql"`
-				Timezone   struct {
-					TimezoneType int    `json:"timezone_type"`
-					Timezone     string `json:"timezone"`
-				} `json:"timezone"`
-				Timestamp  int    `json:"timestamp"`
-				FechaCorta string `json:"fechaCorta"`
-			} `json:"horaInicio"`
-			HoraFin struct {
-				Hora       string `json:"hora"`
-				HoraCorta  string `json:"horaCorta"`
-				Fecha      string `json:"fecha"`
-				Mysql      string `json:"mysql"`
-				DiaNombre  string `json:"diaNombre"`
-				FechaMysql string `json:"fechaMysql"`
-				Timezone   struct {
-					TimezoneType int    `json:"timezone_type"`
-					Timezone     string `json:"timezone"`
-				} `json:"timezone"`
-				Timestamp  int    `json:"timestamp"`
-				FechaCorta string `json:"fechaCorta"`
-			} `json:"horaFin"`
-			SinControlCupos               bool   `json:"sinControlCupos"`
-			ParaLlevar                    bool   `json:"paraLlevar"`
-			ComprobarTieneFechaHasta      bool   `json:"comprobarTieneFechaHasta"`
-			ComprobarEsFutura             bool   `json:"comprobarEsFutura"`
-			GetTiempoLimiteReservaMinutos int    `json:"getTiempoLimiteReservaMinutos"`
-			Horario                       string `json:"horario"`
-		} `json:"servicios"`
+		Servicios []Servicio `json:"servicios"`
 	} `json:"serviciosPorTipo"`
 }
 
