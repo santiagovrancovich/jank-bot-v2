@@ -58,41 +58,15 @@ type Servicio struct {
 		Timestamp  int    `json:"timestamp"`
 		FechaCorta string `json:"fechaCorta"`
 	} `json:"fechaVigenciaDesde"`
-	FechaVigenciaHasta interface{} `json:"fechaVigenciaHasta"`
-	HoraInicio         struct {
-		Hora       string `json:"hora"`
-		HoraCorta  string `json:"horaCorta"`
-		Fecha      string `json:"fecha"`
-		Mysql      string `json:"mysql"`
-		DiaNombre  string `json:"diaNombre"`
-		FechaMysql string `json:"fechaMysql"`
-		Timezone   struct {
-			TimezoneType int    `json:"timezone_type"`
-			Timezone     string `json:"timezone"`
-		} `json:"timezone"`
-		Timestamp  int    `json:"timestamp"`
-		FechaCorta string `json:"fechaCorta"`
-	} `json:"horaInicio"`
-	HoraFin struct {
-		Hora       string `json:"hora"`
-		HoraCorta  string `json:"horaCorta"`
-		Fecha      string `json:"fecha"`
-		Mysql      string `json:"mysql"`
-		DiaNombre  string `json:"diaNombre"`
-		FechaMysql string `json:"fechaMysql"`
-		Timezone   struct {
-			TimezoneType int    `json:"timezone_type"`
-			Timezone     string `json:"timezone"`
-		} `json:"timezone"`
-		Timestamp  int    `json:"timestamp"`
-		FechaCorta string `json:"fechaCorta"`
-	} `json:"horaFin"`
-	SinControlCupos               bool   `json:"sinControlCupos"`
-	ParaLlevar                    bool   `json:"paraLlevar"`
-	ComprobarTieneFechaHasta      bool   `json:"comprobarTieneFechaHasta"`
-	ComprobarEsFutura             bool   `json:"comprobarEsFutura"`
-	GetTiempoLimiteReservaMinutos int    `json:"getTiempoLimiteReservaMinutos"`
-	Horario                       string `json:"horario"`
+	FechaVigenciaHasta            interface{} `json:"fechaVigenciaHasta"`
+	HoraInicio                    interface{} `json:"horaInicio"`
+	HoraFin                       interface{} `json:"horaFin"`
+	SinControlCupos               bool        `json:"sinControlCupos"`
+	ParaLlevar                    bool        `json:"paraLlevar"`
+	ComprobarTieneFechaHasta      bool        `json:"comprobarTieneFechaHasta"`
+	ComprobarEsFutura             bool        `json:"comprobarEsFutura"`
+	GetTiempoLimiteReservaMinutos int         `json:"getTiempoLimiteReservaMinutos"`
+	Horario                       string      `json:"horario"`
 }
 
 type Comedor struct {
@@ -190,4 +164,32 @@ type ReservarJson struct {
 		CancelarReserva          string `json:"cancelarReserva"`
 		BuscarReservasComensal   string `json:"buscarReservasComensal"`
 	} `json:"urls"`
+}
+
+type ServicioDia struct {
+	Servicio Servicio `json:"servicio"`
+	Fecha    string   `json:"fecha"`
+}
+
+type Turno struct {
+	ID    int `json:"id"`
+	Fecha struct {
+		Hora       string `json:"hora"`
+		HoraCorta  string `json:"horaCorta"`
+		Fecha      string `json:"fecha"`
+		Mysql      string `json:"mysql"`
+		DiaNombre  string `json:"diaNombre"`
+		FechaMysql string `json:"fechaMysql"`
+		Timezone   struct {
+			TimezoneType int    `json:"timezone_type"`
+			Timezone     string `json:"timezone"`
+		} `json:"timezone"`
+		Timestamp  int    `json:"timestamp"`
+		FechaCorta string `json:"fechaCorta"`
+	} `json:"fecha"`
+	Reserva *interface{} `json:"reserva"`
+}
+
+type TurnoRequest struct {
+	Turnos []Turno `json:"turnos"`
 }

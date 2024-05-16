@@ -10,10 +10,48 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 )
 
 var conf Config
+
+func buscarTurnos(client *http.Client, s Servicio) []Turno {
+	var servicioHoy ServicioDia
+
+	servicioHoy.Servicio = s
+	servicioHoy.Fecha = fmt.Sprintf("%s 00:00:00", time.Now().Format(time.DateOnly))
+
+	horaInicio := servicioHoy.Servicio.HoraInicio.(map[string]interface{})
+	horaFin := servicioHoy.Servicio.HoraFin.(map[string]interface{})
+
+	servicioHoy.Servicio.HoraInicio = horaInicio["horaCorta"]
+	servicioHoy.Servicio.HoraFin = horaFin["horaCorta"]
+
+	strBytes, err := json.Marshal(servicioHoy)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	str := url.QueryEscape(string(strBytes))
+	body := strings.NewReader(fmt.Sprintf("json=%s", str))
+
+	resp, err := client.Post("https://comedores.unr.edu.ar/comedor-reserva/buscar-turnos-reservas", "application/x-www-form-urlencoded", body)
+	turnos, err := io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+
+	var t TurnoRequest
+	json.Unmarshal(turnos, &t)
+
+	var TurnosArray []Turno
+
+	for _, i := range t.Turnos {
+		TurnosArray = append(TurnosArray, i)
+	}
+
+	return TurnosArray
+}
 
 func filtrarServicios(comedores []Comedor) []Servicio {
 	var Servicios []Servicio
@@ -22,7 +60,7 @@ func filtrarServicios(comedores []Comedor) []Servicio {
 		for _, comedor := range comedores {
 			if comedor.Nombre == comedorConf.Nombre {
 				for _, servicio := range comedor.Servicios {
-					if servicio.HoraInicio.HoraCorta == comedorConf.HoraInicio &&
+					if servicio.HoraInicio.(map[string]interface{})["horaCorta"] == comedorConf.HoraInicio &&
 						servicio.Tipo.Nombre == comedorConf.Comida &&
 						servicio.ParaLlevar == comedorConf.ParaLlevar {
 						Servicios = append(Servicios, servicio)
@@ -91,5 +129,6 @@ func main() {
 		comedoresArray = getComedores(client)
 	}
 
-	fmt.Println(filtrarServicios(comedoresArray))
+	Turnos := buscarTurnos(client, filtrarServicios(comedoresArray)[0])
+	fmt.Println(Turnos[0])
 }
