@@ -45,10 +45,7 @@ func buscarTurnos(client *http.Client, s Servicio) []Turno {
 	json.Unmarshal(turnos, &t)
 
 	var TurnosArray []Turno
-
-	for _, i := range t.Turnos {
-		TurnosArray = append(TurnosArray, i)
-	}
+	TurnosArray = append(TurnosArray, t.Turnos...)
 
 	return TurnosArray
 }
@@ -130,5 +127,5 @@ func main() {
 	}
 
 	Turnos := buscarTurnos(client, filtrarServicios(comedoresArray)[0])
-	fmt.Println(Turnos[0])
+	fmt.Println(len(Turnos))
 }
