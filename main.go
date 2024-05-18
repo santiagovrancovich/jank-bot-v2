@@ -10,17 +10,18 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 )
 
 var conf Config
 
-func buscarTurnos(client *http.Client, s Servicio) []Turno {
+func buscarTurnos(client *http.Client, s Servicio, f time.Time) []Turno {
 	var servicioHoy ServicioDia
 
 	servicioHoy.Servicio = s
-	servicioHoy.Fecha = fmt.Sprintf("%s 00:00:00", time.Now().Format(time.DateOnly))
+	servicioHoy.Fecha = fmt.Sprintf("%s 00:00:00", f.Format(time.DateOnly))
 
 	horaInicio := servicioHoy.Servicio.HoraInicio.(map[string]interface{})
 	horaFin := servicioHoy.Servicio.HoraFin.(map[string]interface{})
@@ -126,6 +127,18 @@ func main() {
 		comedoresArray = getComedores(client)
 	}
 
-	Turnos := buscarTurnos(client, filtrarServicios(comedoresArray)[0])
+	date := time.Now()
+	nextWeek := date.Add(time.Hour * 24 * 7)
+	var Turnos []Turno
+
+	if date.Month() == nextWeek.Month() {
+		Turnos = buscarTurnos(client, filtrarServicios(comedoresArray)[0], date)
+	} else {
+		Turnos = slices.Concat(
+			buscarTurnos(client, filtrarServicios(comedoresArray)[0], date),
+			buscarTurnos(client, filtrarServicios(comedoresArray)[0], nextWeek),
+		)
+	}
+
 	fmt.Println(len(Turnos))
 }
