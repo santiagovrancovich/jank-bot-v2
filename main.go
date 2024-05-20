@@ -17,6 +17,22 @@ import (
 
 var conf Config
 
+func pedirTurno(client *http.Client, turnos []Turno) {
+	for _, turno := range turnos {
+		if turno.Reserva != nil && time.Now().Format(time.DateTime) >= turno.Fecha.FechaMysql {
+			strId := strings.NewReader(fmt.Sprintf("turno=%d", turno.ID))
+			resp, err := client.Post("https://comedores.unr.edu.ar/comedor-reserva/buscar-turnos-reservas", "application/x-www-form-urlencoded", strId)
+
+			if err != nil {
+				fmt.Println("Invalid ID")
+			}
+
+			fmt.Printf("REQUEST ID:%d %s Status: %d\n", turno.ID, turno.Fecha.Fecha, resp.StatusCode)
+			defer resp.Body.Close()
+		}
+	}
+}
+
 func buscarTurnos(client *http.Client, s Servicio, f time.Time) []Turno {
 	var servicioHoy ServicioDia
 
@@ -141,4 +157,5 @@ func main() {
 	}
 
 	fmt.Println(len(Turnos))
+	pedirTurno(client, Turnos[0:1])
 }
