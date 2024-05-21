@@ -87,6 +87,18 @@ func filtrarServicios(comedores []Comedor) []Servicio {
 	return Servicios
 }
 
+func filtrarDias(Turnos []Turno, Days []string) []Turno {
+	var t []Turno
+
+	for _, turno := range Turnos {
+		if slices.Contains(Days, turno.Fecha.DiaNombre[0:2]) {
+			t = append(t, turno)
+		}
+	}
+
+	return t
+}
+
 func getComedores(client *http.Client) []Comedor {
 	resp, err := client.Get("https://comedores.unr.edu.ar/comedor-reserva/reservar")
 	reg, _ := regexp.Compile("var jsonReservar[\\s\\S]*?\\};")
@@ -143,19 +155,24 @@ func main() {
 		comedoresArray = getComedores(client)
 	}
 
+	arrServicios := filtrarServicios(comedoresArray)
 	date := time.Now()
 	nextWeek := date.Add(time.Hour * 24 * 7)
-	var Turnos []Turno
 
-	if date.Month() == nextWeek.Month() {
-		Turnos = buscarTurnos(client, filtrarServicios(comedoresArray)[0], date)
-	} else {
-		Turnos = slices.Concat(
-			buscarTurnos(client, filtrarServicios(comedoresArray)[0], date),
-			buscarTurnos(client, filtrarServicios(comedoresArray)[0], nextWeek),
-		)
+	for i, servicio := range arrServicios {
+		var Turnos []Turno
+
+		if date.Month() == nextWeek.Month() {
+			Turnos = buscarTurnos(client, servicio, date)
+		} else {
+			Turnos = slices.Concat(
+				buscarTurnos(client, servicio, date),
+				buscarTurnos(client, servicio, nextWeek),
+			)
+		}
+
+		Turnos = filtrarDias(Turnos, conf.Comedores[i].Dias)
+
+		pedirTurno(client, Turnos)
 	}
-
-	fmt.Println(len(Turnos))
-	pedirTurno(client, Turnos[0:1])
 }
