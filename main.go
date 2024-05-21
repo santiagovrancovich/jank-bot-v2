@@ -67,38 +67,6 @@ func buscarTurnos(client *http.Client, s Servicio, f time.Time) []Turno {
 	return TurnosArray
 }
 
-func filtrarServicios(comedores []Comedor) []Servicio {
-	var Servicios []Servicio
-
-	for _, comedorConf := range conf.Comedores {
-		for _, comedor := range comedores {
-			if comedor.Nombre == comedorConf.Nombre {
-				for _, servicio := range comedor.Servicios {
-					if servicio.HoraInicio.(map[string]interface{})["horaCorta"] == comedorConf.HoraInicio &&
-						servicio.Tipo.Nombre == comedorConf.Comida &&
-						servicio.ParaLlevar == comedorConf.ParaLlevar {
-						Servicios = append(Servicios, servicio)
-					}
-				}
-			}
-		}
-	}
-
-	return Servicios
-}
-
-func filtrarDias(Turnos []Turno, Days []string) []Turno {
-	var t []Turno
-
-	for _, turno := range Turnos {
-		if slices.Contains(Days, turno.Fecha.DiaNombre[0:2]) {
-			t = append(t, turno)
-		}
-	}
-
-	return t
-}
-
 func getComedores(client *http.Client) []Comedor {
 	resp, err := client.Get("https://comedores.unr.edu.ar/comedor-reserva/reservar")
 	reg, _ := regexp.Compile("var jsonReservar[\\s\\S]*?\\};")
@@ -156,22 +124,14 @@ func main() {
 	}
 
 	arrServicios := filtrarServicios(comedoresArray)
-	date := time.Now()
-	nextWeek := date.Add(time.Hour * 24 * 7)
-
 	for i, servicio := range arrServicios {
-		var Turnos []Turno
+		Turnos := checkTurnos(client, servicio, conf.Comedores[i].Dias)
 
-		if date.Month() == nextWeek.Month() {
-			Turnos = buscarTurnos(client, servicio, date)
-		} else {
-			Turnos = slices.Concat(
-				buscarTurnos(client, servicio, date),
-				buscarTurnos(client, servicio, nextWeek),
-			)
+		for slices.IndexFunc(Turnos, func(t Turno) bool { return t.Reserva == nil }) != -1 {
+			fmt.Printf("Nothing was found, reattempting in: %s\n", time.Now().Add(time.Duration(conf.SleepTime)*time.Millisecond))
+			time.Sleep(time.Duration(conf.SleepTime) * time.Millisecond)
+			Turnos = checkTurnos(client, servicio, conf.Comedores[i].Dias)
 		}
-
-		Turnos = filtrarDias(Turnos, conf.Comedores[i].Dias)
 
 		pedirTurno(client, Turnos)
 	}
